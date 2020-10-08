@@ -15,7 +15,7 @@ def to_img(x):
     out=out.view(-1,1,28,28)#view()函数作用是将一个多行的Tensor,拼接成一行
     return out
 batch_size=128
-num_epoch=100
+num_epoch=10
 z_dimension=100
 # 图像预处理
 img_transform = transforms.Compose([
