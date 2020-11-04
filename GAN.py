@@ -15,7 +15,7 @@ def to_img(x):
     out=out.view(-1,1,28,28)#view()函数作用是将一个多行的Tensor,拼接成一行
     return out
 batch_size=128
-num_epoch=10
+num_epoch=30
 z_dimension=100
 # 图像预处理
 img_transform = transforms.Compose([
@@ -135,7 +135,7 @@ for epoch in range(num_epoch): #进行多个epoch的训练
         if epoch==0:
             real_images=to_img(real_img.cpu().data)
             save_image(real_images, './img/real_images.png')
-        fake_images = to_img(real_img.cpu().data)
+        fake_images = to_img(fake_img.cpu().data)
         save_image(fake_images, './img/fake_images-{}.png'.format(epoch+1))
 #保存模型
 torch.save(G.state_dict(),'./generator.pth')
