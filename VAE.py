@@ -16,8 +16,6 @@ def loss_function(recon_x, x, mu, logvar):
     BCE_loss = nn.BCELoss(reduction='sum')
     reconstruction_loss = BCE_loss(recon_x, x)
     KL_divergence = -0.5 * torch.sum(1+logvar-torch.exp(logvar)-mu**2)
-    #KLD_ele = mu.pow(2).add_(logvar.exp()).mul_(-1).add_(1).add_(logvar)
-    #KLD = torch.sum(KLD_ele).mul_(-0.5)
     print(reconstruction_loss, KL_divergence)
 
     return reconstruction_loss + KL_divergence
@@ -32,6 +30,7 @@ class VAE(nn.Module):
         self.fc3 = nn.Linear(20, 400)
         self.fc4 = nn.Linear(400, 784)
 
+###########Encoder Part############
     def encode(self, x):
         h1 = F.relu(self.fc1(x))
         return self.fc2_mean(h1), self.fc2_logvar(h1)
@@ -43,6 +42,8 @@ class VAE(nn.Module):
         z = torch.randn(std.size()) * std + mu
         return z
 
+
+#############Decoder Part#############
     def decode(self, z):
         h3 = F.relu(self.fc3(z))
         return torch.sigmoid(self.fc4(h3))
