@@ -6,7 +6,7 @@ from torchvision import transforms
 from torchvision import datasets
 from torchvision.utils import  save_image
 import os
-#创建文件夹
+#create directory
 if not os.path.exists('./img'):
     os.mkdir('./img')
 def to_img(x):
@@ -15,24 +15,26 @@ def to_img(x):
     out=out.view(-1,1,28,28)#view()函数作用是将一个多行的Tensor,拼接成一行
     return out
 batch_size=128
-num_epoch=30
+num_epoch=50
 z_dimension=100
-# 图像预处理
+# preprocessing the image
 img_transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.1,), (0.5,))
     ])
-#mnist dataset mnist数据集下载
+
+
+#download mnist dataset
 mnist=datasets.MNIST(
     root='./data/',train=True,transform=img_transform,download=True
 )
-#data loader 数据载入
+#data loader
 dataloader=torch.utils.data.DataLoader(
     dataset=mnist,batch_size=batch_size,shuffle=True
 )
-#定义判别器  #####Discriminator######使用多层网络来作为判别器
-#将图片28x28展开成784，然后通过多层感知器，中间经过斜率设置为0.2的LeakyReLU激活函数，
-# 最后接sigmoid激活函数得到一个0到1之间的概率进行二分类。
+
+  #####Discriminator######
+
 class discriminator(nn.Module):
     def __init__(self):
         super(discriminator,self).__init__()
@@ -50,10 +52,7 @@ class discriminator(nn.Module):
         x=self.dis(x)
         return x
 ####### 定义生成器 Generator #####
-#输入一个100维的0～1之间的高斯分布，然后通过第一层线性变换将其映射到256维,
-# 然后通过LeakyReLU激活函数，接着进行一个线性变换，再经过一个LeakyReLU激活函数，
-# 然后经过线性变换将其变成784维，最后经过Tanh激活函数是希望生成的假的图片数据分布
-# 能够在-1～1之间。
+
 class generator(nn.Module):
     def __init__(self):
         super(generator,self).__init__()
@@ -110,13 +109,7 @@ for epoch in range(num_epoch): #进行多个epoch的训练
         d_loss.backward()  # 将误差反向传播
         d_optimizer.step()  # 更新参数
         # ==================训练生成器============================
-        ################################生成网络的训练###############################
-        # 原理：目的是希望生成的假的图片被判别器判断为真的图片，
-        # 在此过程中，将判别器固定，将假的图片传入判别器的结果与真实的label对应，
-        # 反向传播更新的参数是生成网络里面的参数，
-        # 这样可以通过更新生成网络里面的参数，来训练网络，使得生成的图片让判别器以为是真的
-        # 这样就达到了对抗的目的
-        # 计算假的图片的损失
+
         z = Variable(torch.randn(num_img, z_dimension)).to(device) # 得到随机噪声
         fake_img = G(z) #随机噪声输入到生成器中，得到一副假的图片
         output = D(fake_img)  # 经过判别器得到的结果

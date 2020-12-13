@@ -87,7 +87,7 @@ def train(epoch):
         print('Epoch {}, loss: {:.6f}'.format(epoch, all_loss/(batch_idx+1)))
         # Save generated images for every epoch
     fake_images = gen_imgs.view(-1, 1, 28, 28)
-    save_image(fake_images, 'img/VAE_fake_images-{}.png'.format(epoch + 1))
+    save_image(fake_images, 'img/fake_images-{}.png'.format(epoch + 1))
 
 
 
